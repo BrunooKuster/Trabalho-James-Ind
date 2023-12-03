@@ -23,10 +23,11 @@ function CadastroDeSalas() {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (localStorage.getItem('salas') != null) {
-      let valorFinal = localStorage.getItem('salas') + JSON.stringify(dadosFormulario);
-      localStorage.setItem('salas', valorFinal)
+      let valorFinal = JSON.parse(localStorage.getItem('salas'))
+      valorFinal.push(dadosFormulario)
+      localStorage.setItem('salas', JSON.stringify(valorFinal))
     } else {
-      localStorage.setItem('salas', JSON.stringify(dadosFormulario))
+      localStorage.setItem("salas", JSON.stringify([dadosFormulario]))
     }
     setDadosFormulario({
       andar: '',

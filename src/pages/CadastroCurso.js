@@ -24,10 +24,11 @@ function CadastroCurso() {
  const handleSubmit = (event) => {
     event.preventDefault();
     if (localStorage.getItem('curso') != null) {
-      let valorFinal = JSON.parse(localStorage.getItem('curso')).push(dadosFormulario)
+      let valorFinal = JSON.parse(localStorage.getItem('curso'))
+      valorFinal.push(dadosFormulario)
       localStorage.setItem('curso', JSON.stringify(valorFinal))
     } else {
-      localStorage.setItem('curso', JSON.stringify(dadosFormulario))
+      localStorage.setItem("curso", JSON.stringify([dadosFormulario]))
     }
     setDadosFormulario({
       nomeCurso: '',
