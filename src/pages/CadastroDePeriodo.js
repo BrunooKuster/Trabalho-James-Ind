@@ -76,6 +76,7 @@ function CadastroDePeriodo() {
             <Form.Group controlId="turno">
               <Form.Label>Turnos</Form.Label>
               <Form.Select onChange={handleInputChange} name="turno">
+                <option>Selecione o turno</option>
                 <option value="matutino">Matutino</option>
                 <option value="vespertino">Vespertino</option>
                 <option value="noturno">Noturno</option>
@@ -84,11 +85,12 @@ function CadastroDePeriodo() {
             <Form.Group controlId="cursos">
               <Form.Label>Cursos</Form.Label>
               <Form.Select onChange={handleInputChange} name="cursos">
+                <option>Selecione o curso</option>
                 {
                   localStorage.getItem("curso") != null &&
                     JSON.parse(localStorage.getItem("curso")).map(
                       curso => (
-                        <option value={curso.nomeCurso}>{curso.nomeCurso}</option>
+                        <option name="cursos" value={curso.nomeCurso}>{curso.nomeCurso}</option>
                       )
                     )
                 }

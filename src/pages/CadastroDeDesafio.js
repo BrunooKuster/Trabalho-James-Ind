@@ -37,13 +37,15 @@ function CadastroDeDesafio() {
 
     let listaDeProfessor = JSON.parse(localStorage.getItem('professor'))
     listaDeProfessor
-      .filter(professor => professor.nomeDoProfessor == dadosFormulario.professor)
+      .filter(professor => professor.nomeDoProfessor === dadosFormulario.professor)
       .forEach(professor => professor.desafioAssociado = dadosFormulario.nomeDoDesafio)
+    localStorage.setItem("professor", JSON.stringify(listaDeProfessor))
 
     let listaDePeriodos = JSON.parse(localStorage.getItem('periodos'))
     listaDePeriodos
-      .filter(periodos => periodos.numeroDoPeriodo == dadosFormulario.periodos)
+      .filter(periodos => periodos.numeroDoPeriodo === dadosFormulario.periodos)
       .forEach(periodos => periodos.desafioAssociado.push(dadosFormulario))
+    localStorage.setItem("periodos", JSON.stringify(listaDePeriodos))
 
     setDadosFormulario({
       nomeDoDesafio:'',
@@ -75,6 +77,7 @@ function CadastroDeDesafio() {
             <Form.Group controlId="periodos">
               <Form.Label>Periodos</Form.Label>
               <Form.Select onChange={handleInputChange} name="periodos">
+                <option>Selecione um dos Períodos disponíveis</option>
                 {
                   localStorage.getItem("periodos") != null &&
                     JSON.parse(localStorage.getItem("periodos"))
@@ -87,13 +90,17 @@ function CadastroDeDesafio() {
             <Form.Group controlId= "professor">
               <Form.Label>Professor</Form.Label>
               <Form.Select onChange={handleInputChange} name="professor">
+                <option>Selecione um dos Professores disponíveis</option>
                 {
                   localStorage.getItem("professor") != null &&
                     JSON.parse(localStorage.getItem("professor"))
-                      .filter((professor) => professor.desafioAssociado == null)
-                      .map((professor) => (
-                        <option value={professor.nomeDoProfessor}>{professor.nomeDoProfessor}</option>
-                      ))
+                      .filter((professor) => professor.desafioAssociado === null)
+                      .map((professor) => {
+                        console.log(professor)
+                        return (
+                          <option value={professor.nomeDoProfessor}>{professor.nomeDoProfessor}</option>
+                        )
+                    })
                 }
               </Form.Select>
             </Form.Group>
@@ -108,6 +115,7 @@ function CadastroDeDesafio() {
             <Form.Group controlId="diaDaSemana">
               <Form.Label>Dia da semana</Form.Label>
               <Form.Select onChange={handleInputChange} name="diaDaSemana">
+                <option>Selecione um dia da semana</option>
                 <option value="segunda">Segunda-feira</option>
                 <option value="terca">Terça-feira</option>
                 <option value="quarta">Quarta-feira</option>
@@ -122,6 +130,7 @@ function CadastroDeDesafio() {
             <Form.Group controlId= "sala">
               <Form.Label>Salas</Form.Label>
               <Form.Select onChange={handleInputChange} name="sala">
+                <option>Selecione uma sala</option>
                 {
                   localStorage.getItem("salas") != null &&
                     JSON.parse(localStorage.getItem("salas")).map(
