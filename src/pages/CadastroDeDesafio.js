@@ -1,23 +1,34 @@
+import React, { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import 'bootstrap/dist/css/bootstrap.css';
-import React, {useState} from 'react';
+import Table from 'react-bootstrap/Table';
 
-function CadastroDeDesafio() { 
+function CadastroDeDesafio() {
   const [abrirPaginaDoDesafio, setAbrirPaginaDeDesafio] = useState(false);
   const [dadosFormulario, setDadosFormulario] = useState({
-    nomeDoDesafio:'',
-    periodos:'',
-    professor:'',
-    dataInicio: `${new Date().getYear()}-${new Date().getMonth()}-${new Date().getDate()}`,
-    dataFim: `${new Date().getYear()}-${new Date().getMonth()}-${new Date().getDate() + 1}`,
-    diaDaSemana:'',
-    horario:'',
-    sala:''
+    nomeDoDesafio: '',
+    periodos: '',
+    professor: '',
+    dataInicio: `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`,
+    dataFim: `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate() + 1}`,
+    diaDaSemana: '',
+    horario: '',
+    sala: ''
   });
-  
-  const handleClose = () => setAbrirPaginaDeDesafio(false);
+  const [listaDeDesafios, setListaDeDesafios] = useState([]);
+  const [desafioSelecionado, setDesafioSelecionado] = useState(null);
+
+  useEffect(() => {
+    // Carregar os dados do localStorage quando o componente for montado
+    const dadosLocalStorage = JSON.parse(localStorage.getItem('desafio')) || [];
+    setListaDeDesafios(dadosLocalStorage);
+  }, []);
+
+  const handleClose = () => {
+    setAbrirPaginaDeDesafio(false);
+    setDesafioSelecionado(null);
+  };
   const handleShow = () => setAbrirPaginaDeDesafio(true);
 
   const handleInputChange = (event) => {
@@ -27,13 +38,26 @@ function CadastroDeDesafio() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (localStorage.getItem('desafio') != null) {
-      let valorFinal = JSON.parse(localStorage.getItem('desafio'))
-      valorFinal.push(dadosFormulario)
-      localStorage.setItem('desafio', JSON.stringify(valorFinal))
+    if (desafioSelecionado === null) {
+      // Adicionar novo desafio
+      if (localStorage.getItem('desafio') != null) {
+        let valorFinal = JSON.parse(localStorage.getItem('desafio'))
+        valorFinal.push(dadosFormulario)
+        localStorage.setItem('desafio', JSON.stringify(valorFinal))
+      } else {
+        localStorage.setItem('desafio', JSON.stringify([dadosFormulario]))
+      }
     } else {
-      localStorage.setItem('desafio', JSON.stringify([dadosFormulario]))
+      // Atualizar desafio existente
+      const desafiosAtualizados = listaDeDesafios.map((desafio, index) => (
+        index === desafioSelecionado ? dadosFormulario : desafio
+      ));
+      localStorage.setItem('desafio', JSON.stringify(desafiosAtualizados));
     }
+
+    // Atualizar a lista de desafios
+    setListaDeDesafios(JSON.parse(localStorage.getItem('desafio')));
+
 
     let listaDeProfessor = JSON.parse(localStorage.getItem('professor'))
     listaDeProfessor
@@ -46,18 +70,35 @@ function CadastroDeDesafio() {
       .filter(periodos => periodos.numeroDoPeriodo === dadosFormulario.periodos)
       .forEach(periodos => periodos.desafioAssociado.push(dadosFormulario))
     localStorage.setItem("periodos", JSON.stringify(listaDePeriodos))
+    
 
     setDadosFormulario({
       nomeDoDesafio:'',
       periodos:'',
       professor:'',
-      dataInicio: `${new Date().getYear()}-${new Date().getMonth()}-${new Date().getDate()}`,
-      dataFim: `${new Date().getYear()}-${new Date().getMonth()}-${new Date().getDate() + 1}`,
+      dataInicio: `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`,
+      dataFim: `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate() + 1}`,
       diaDaSemana:'',
       horario:'',
       sala:''
     });
+
+    setDesafioSelecionado(null);
   }
+
+  const handleEditarDesafio = (index) => {
+    setDesafioSelecionado(index);
+    setAbrirPaginaDeDesafio(true);
+    setDadosFormulario(listaDeDesafios[index]);
+  }
+
+  const handleExcluirDesafio = (index) => {
+    const desafiosAtualizados = listaDeDesafios.filter((desafio, i) => i !== index);
+    localStorage.setItem('desafio', JSON.stringify(desafiosAtualizados));
+    setListaDeDesafios(desafiosAtualizados);
+  }
+  
+
   return (
     <>
       <Button variant="primary" onClick={handleShow}>
@@ -70,7 +111,7 @@ function CadastroDeDesafio() {
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit} className="cadastroDeDesafio"> 
-            <Form.Group controlId="nomeDoDesafio">
+          <Form.Group controlId="nomeDoDesafio">
               <Form.Label>Nome do Desafio</Form.Label>
               <Form.Control onChange={handleInputChange} name="nomeDoDesafio" value={dadosFormulario.nomeDoDesafio} type="text"/>
             </Form.Group>
@@ -143,8 +184,47 @@ function CadastroDeDesafio() {
             </Form.Group>
             <Button variant="primary" type="submit">enviar</Button>
           </Form>
+          {/* Exibir dinamicamente os desafios salvos */}
+
         </Modal.Body>
       </Modal>
+
+      
+      <div>
+        <h1>Desafios Salvos</h1>
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Nome do Desafio</th>
+              <th>Períodos</th>
+              <th>Professor</th>
+              <th>Data Início</th>
+              <th>Data Fim</th>
+              <th>Horário</th>
+              <th>Ações</th>
+              <th></th>
+              {/* Adicione outras colunas conforme necessário */}
+            </tr>
+          </thead>
+          <tbody>
+            {listaDeDesafios.map((desafio, index) => (
+              <tr key={index}>
+                <td>{desafio.nomeDoDesafio}</td>
+                <td>{desafio.periodos}</td>
+                <td>{desafio.professor}</td>
+                <td>{desafio.dataInicio}</td>
+                <td>{desafio.dataFim}</td>
+                <td>{desafio.horario}</td>
+                <td>
+                  <Button variant="info" onClick={() => handleEditarDesafio(index)}>Editar</Button>
+                  <Button variant="danger" onClick={() => handleExcluirDesafio(index)}>Excluir</Button>
+                </td>
+                {/* Adicione outras colunas conforme necessário */}
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
     </>
   );
 }

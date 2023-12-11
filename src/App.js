@@ -7,6 +7,8 @@ import CalendarioDeHorarios from "./pages/CalendarioDeHorarios.js";
 
 function App() {
 
+  
+
   return (
     <div className="App">
       <CadastroCurso/>
@@ -14,6 +16,8 @@ function App() {
       <CadastroProfessor/>
       <CadastroDeSalas/>
       <CadastroDeDesafio/>
+      <CalendarioDeHorarios/>
+      
     </div>
   );
 }
