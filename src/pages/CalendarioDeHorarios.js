@@ -29,29 +29,29 @@ function CalendarioHorarios() {
     const diasDaSemana = ['Qua', 'Qui', 'Sex', 'Sáb', 'Dom', 'Seg', 'Ter'];
     const primeiroDia = new Date(2023, 10, 1); // Novembro é o mês 10 (0-indexed)
     const ultimoDia = new Date(2023, 10, 30);
-  
+
     const diasDoMes = [];
     let diaAtual = new Date(primeiroDia);
-  
+
     // Adiciona dias da semana no topo
     const headerRow = diasDaSemana.map((dia) => <th key={dia}>{dia}</th>);
     diasDoMes.push(<tr key="header">{headerRow}</tr>);
-  
+
     // Preenche o calendário
     while (diaAtual <= ultimoDia) {
       const semana = [];
       for (let i = 0; i < 7; i++) {
         const dia = diaAtual.getDate();
-  
+
         // Obter desafios associados ao dia atual
         const desafiosDoDia = desafios.filter((desafio) => {
           const dataFimDesafio = new Date(desafio.dataFim);
           return diaAtual >= new Date(desafio.dataInicio) && diaAtual <= dataFimDesafio;
         });
-  
+
         // Estilo condicional para marcar o dia com desafio
         const estiloDia = desafiosDoDia.length > 0 ? { backgroundColor: 'yellow' } : {};
-  
+
         // Renderizar o conteúdo do dia
         const conteudoDia = desafiosDoDia.map((desafio, index) => (
           <div key={index}>
@@ -60,7 +60,7 @@ function CalendarioHorarios() {
             <p>Sala: {desafio.sala}</p>
           </div>
         ));
-  
+
         semana.push(
           <td key={dia} style={estiloDia} onClick={() => console.log(`Clicou no dia ${dia}`)}>
             <div>
@@ -69,18 +69,18 @@ function CalendarioHorarios() {
             {conteudoDia}
           </td>
         );
-  
+
         diaAtual.setDate(diaAtual.getDate() + 1);
       }
       diasDoMes.push(<tr key={`semana${diaAtual.getDate() - 7}`}>{semana}</tr>);
     }
-  
+
     return (
       <Table responsive bordered>
         <tbody>{diasDoMes}</tbody>
       </Table>
     );
-  
+
   };
 
   return (

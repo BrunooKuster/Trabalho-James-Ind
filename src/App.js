@@ -11,12 +11,13 @@ function App() {
 
   return (
     <div className="App">
+      <CalendarioDeHorarios/>
       <CadastroCurso/>
       <CadastroDePeriodo/>
       <CadastroProfessor/>
       <CadastroDeSalas/>
       <CadastroDeDesafio/>
-      <CalendarioDeHorarios/>
+      
       
     </div>
   );
